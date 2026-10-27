@@ -1,0 +1,560 @@
+<title>Plancito</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=DM+Sans:wght@400;500;700&display=swap">
+<style>
+/* Phone app shell: header, scrolling screen, bottom tab bar. Single dark "night out" look on purpose. */
+:root {
+  --bg: #15121C;
+  --surface: #221D2C;
+  --surface-2: #2B2436;
+  --line: #3A3346;
+  --fg: #F6F2EC;
+  --muted: #B3ACBF;
+  --accent: #FF5B3A;
+  --on-accent: #15121C;
+  --blue: #8AD1FF;
+  --lime: #E4F5A8;
+  --warn: #FFC56B;
+  --display: "Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
+  --body: "DM Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme: dark;
+}
+html, body { height: 100%; }
+body { background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 15px; line-height: 1.45; }
+* { box-sizing: border-box; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+
+.app { max-width: 480px; margin: 0 auto; height: 100%; display: flex; flex-direction: column; background: var(--bg); }
+.top { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-block: 12px 8px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.brand { display: flex; align-items: center; gap: 8px; font-family: var(--display); font-weight: 800; font-size: 22px; letter-spacing: -0.5px; }
+.brand-mark { width: 30px; height: 30px; border-radius: 9px; background: var(--accent); display: grid; place-items: center; }
+.demo-tag { font-size: 12px; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 4px 10px; }
+.screen { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 14px; padding-block: 8px 28px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.tabs { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); border-top: 1px solid var(--line); background: var(--bg); padding-block: 6px calc(8px + env(safe-area-inset-bottom, 0px)); padding-left: max(8px, env(safe-area-inset-left, 0px)); padding-right: max(8px, env(safe-area-inset-right, 0px)); }
+.tab { min-height: 52px; border: 0; background: none; color: var(--muted); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; font-size: 12px; border-radius: 12px; }
+.tab[aria-current="page"] { color: var(--accent); font-weight: 700; }
+.tab svg { width: 22px; height: 22px; }
+
+h1 { margin: 0; font-family: var(--display); font-weight: 800; font-size: 30px; line-height: 1.08; letter-spacing: -0.6px; text-wrap: balance; }
+h2 { margin: 0; font-family: var(--display); font-weight: 600; font-size: 19px; line-height: 1.25; text-wrap: balance; }
+.lead { margin: 0; color: var(--muted); font-size: 15px; }
+.label { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; }
+.small { font-size: 13px; color: var(--muted); }
+
+.card { background: var(--surface); border-radius: 20px; overflow: hidden; display: flex; flex-direction: column; }
+.card-body { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 10px; }
+.band { height: 84px; display: flex; align-items: flex-end; justify-content: space-between; padding: 10px 14px; gap: 8px; }
+.tagpill { font-size: 12px; font-weight: 700; color: #15121C; background: #F6F2EC; border-radius: 8px; padding: 4px 8px; }
+.tagpill.lime { background: var(--lime); }
+.who { display: flex; align-items: center; gap: 10px; }
+.avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--line); display: grid; place-items: center; font-weight: 700; flex: none; }
+.who-text { display: flex; flex-direction: column; min-width: 0; }
+.meta { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 13px; color: var(--muted); }
+
+.btn { min-height: 52px; border-radius: 16px; border: 0; background: var(--accent); color: var(--on-accent); font-weight: 700; font-size: 16px; padding: 0 18px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.btn.ghost { background: transparent; color: var(--fg); border: 1.5px solid var(--line); font-weight: 500; }
+.btn.soft { background: var(--surface-2); color: var(--fg); font-weight: 500; }
+.btn.small { min-height: 44px; font-size: 14px; border-radius: 12px; }
+.btn-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.back { align-self: flex-start; min-height: 44px; padding: 0 14px; border-radius: 12px; border: 0; background: var(--surface); }
+
+.chips { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 2px; }
+.chip { flex: none; min-height: 40px; padding: 0 16px; border-radius: 999px; border: 1.5px solid var(--line); background: transparent; font-size: 14px; }
+.chip[aria-pressed="true"] { background: var(--fg); color: var(--bg); border-color: var(--fg); font-weight: 700; }
+
+.status { align-self: flex-start; font-size: 12px; font-weight: 700; border-radius: 8px; padding: 4px 8px; color: #15121C; background: var(--muted); }
+.status.open { background: var(--blue); }
+.status.wait { background: var(--warn); }
+.status.ok { background: var(--lime); }
+.status.bad { background: #FFB4A2; }
+
+.checks { display: flex; flex-direction: column; gap: 10px; }
+.check { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; }
+.check b { color: var(--blue); }
+.note { background: var(--surface-2); border-radius: 16px; padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; font-size: 14px; }
+.note.ok { background: var(--lime); color: #15121C; }
+.note.ok .small { color: #3B3A2E; }
+
+form { display: flex; flex-direction: column; gap: 14px; }
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field label { font-size: 14px; font-weight: 700; }
+.input { min-height: 50px; border-radius: 14px; border: 1.5px solid var(--line); background: var(--surface); padding: 0 14px; font-size: 15px; width: 100%; }
+textarea.input { padding: 12px 14px; min-height: 80px; resize: vertical; }
+.grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.roles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.role { border: 1.5px solid var(--line); background: var(--surface); border-radius: 18px; padding: 16px; text-align: left; display: flex; flex-direction: column; gap: 4px; min-height: 96px; }
+.role[aria-pressed="true"] { border: 2px solid var(--accent); }
+.role strong { font-size: 16px; }
+.error { color: #FFB4A2; font-size: 14px; margin: 0; }
+
+.ring { width: 220px; height: 220px; border-radius: 50%; border: 3px dashed var(--accent); display: grid; place-items: center; align-self: center; }
+.ring-in { width: 192px; height: 192px; border-radius: 50%; background: var(--surface); display: grid; place-items: center; text-align: center; padding: 20px; color: var(--muted); font-size: 14px; }
+.busy .ring { animation: spin 6s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .busy .ring { animation: none; } }
+
+.stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.stat { background: var(--surface); border-radius: 16px; padding: 12px; display: flex; flex-direction: column; gap: 2px; }
+.stat b { font-family: var(--display); font-size: 20px; font-variant-numeric: tabular-nums; }
+.ledger { display: flex; flex-direction: column; background: var(--surface); border-radius: 18px; }
+.ledger-row { display: flex; justify-content: space-between; gap: 12px; padding: 12px 16px; border-top: 1px solid var(--line); }
+.ledger-row:first-child { border-top: 0; }
+.ledger-row .amt { font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.empty { background: var(--surface); border-radius: 18px; padding: 20px 16px; display: flex; flex-direction: column; gap: 10px; }
+.toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(84px + env(safe-area-inset-bottom, 0px)); width: min(440px, calc(100% - 32px)); background: var(--fg); color: var(--bg); border-radius: 14px; padding: 12px 16px; font-weight: 700; font-size: 14px; z-index: 20; }
+</style>
+
+<div class="app" id="app"></div>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<script>
+(function () {
+  var KEY = "plancito-demo-v2";
+  var GARANTIA = 250;
+  var TONO = { "Cena": "#FFB4A2", "Concierto": "#B9E4FF", "Café": "#E4F5A8", "Actividad": "#D9C8FF", "Otro": "#F6F2EC" };
+  var TIPOS = ["Cena", "Concierto", "Café", "Actividad", "Otro"];
+  var HOLDING = ["abierta", "aceptada", "confirmada", "en_lugar", "en_lugar_el"];
+
+  var S = load();
+  var ui = { tab: null, view: null, detailId: null, filter: "Todos", step: 1, pending: null, busy: null, error: "", confirmReset: false, newTipo: "Cena" };
+
+  function load() { try { var raw = localStorage.getItem(KEY); return raw ? JSON.parse(raw) : null; } catch (e) { return null; } }
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+  function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+  function money(n) { return "$" + Number(n || 0).toLocaleString("es-MX"); }
+  function fmt(iso) {
+    try { return new Date(iso).toLocaleString("es-MX", { weekday: "short", day: "numeric", month: "short", hour: "numeric", minute: "2-digit" }); }
+    catch (e) { return iso; }
+  }
+  function inDays(days, h, m) { var t = new Date(); t.setDate(t.getDate() + days); t.setHours(h, m, 0, 0); return t.toISOString(); }
+  function uid() { return "i" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+  function find(id) { for (var i = 0; i < S.invites.length; i++) if (S.invites[i].id === id) return S.invites[i]; return null; }
+  function ledger(kind, amount, desc) { S.wallet.unshift({ kind: kind, amount: amount, desc: desc, at: new Date().toISOString() }); }
+
+  function examples() {
+    return [
+      { id: "ex1", from: "Diego", age: 31, tipo: "Concierto", plan: "Te invito a un concierto de rock en español", lugar: "Foro en la colonia Juárez", fecha: inDays(5, 21, 0), costo: 1200, msg: "Me encanta la música en vivo, ¿y a ti?", rep: { ok: 6, total: 6 } },
+      { id: "ex2", from: "Andrés", age: 34, tipo: "Cena", plan: "Te invito a cenar cocina mexicana contemporánea", lugar: "Restaurante en Polanco", fecha: inDays(4, 20, 30), costo: 1500, msg: "Dicen que el mole es increíble.", rep: { ok: 3, total: 3 } },
+      { id: "ex3", from: "Rafa", age: 28, tipo: "Actividad", plan: "Te invito a una clase de salsa y luego unos tacos", lugar: "Academia en el Centro", fecha: inDays(3, 19, 0), costo: 700, msg: "No sé bailar, aprendemos juntos.", rep: { ok: 0, total: 0 } },
+      { id: "ex4", from: "Óscar", age: 30, tipo: "Café", plan: "Te invito un café y a caminar por Chapultepec", lugar: "Café cerca del Bosque de Chapultepec", fecha: inDays(6, 11, 0), costo: 250, msg: "Plan tranquilo de domingo.", rep: { ok: 2, total: 3 } },
+      { id: "ex5", from: "Iván", age: 29, tipo: "Actividad", doble: true, plan: "Te invito a ti y a tu amiga a boliche y luego unas pizzas", lugar: "Boliche en la Del Valle", fecha: inDays(4, 19, 30), costo: 1100, msg: "Voy con mi amigo Toño. Más relajado en grupo.", rep: { ok: 4, total: 4 } }
+    ].map(function (x) { x.example = true; x.mine = false; x.status = "abierta"; x.acceptedBy = null; x.doble = !!x.doble; return x; });
+  }
+
+  function repText(r) { return r.total === 0 ? "Nuevo · primera cita" : "Cumplió " + r.ok + " de " + r.total + " citas"; }
+
+  var STATUS = {
+    abierta: ["Publicada", "open"], aceptada: ["Aceptada · falta confirmar", "wait"], confirmada: ["Confirmada", "ok"],
+    en_lugar: ["Los dos llegaron", "ok"], en_lugar_el: ["Hiciste check-in", "ok"], cumplida: ["Cita cumplida", "ok"],
+    liberada: ["Nadie aceptó · garantía liberada", ""], el_no_llego: ["Él no llegó", "bad"], ella_no_llego: ["Ella no llegó", "bad"], yo_no_llegue: ["No llegaste", "bad"]
+  };
+  function statusPill(st) { var s = STATUS[st] || [st, ""]; return '<span class="status ' + s[1] + '">' + esc(s[0]) + "</span>"; }
+
+  var ICON = {
+    grid: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>',
+    cal: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
+    plus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>',
+    shield: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5c0 5-3.5 8.5-7 10-3.5-1.5-7-5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg>',
+    user: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>',
+    glass: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#15121C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3v8a4 4 0 0 0 8 0V3"/><path d="M12 15v6"/><path d="M8 21h8"/></svg>'
+  };
+
+  function tabsFor(role) {
+    return role === "el"
+      ? [["mias", "Mis invitaciones", ICON.grid], ["nueva", "Nueva", ICON.plus], ["garantias", "Garantías", ICON.shield], ["perfil", "Perfil", ICON.user]]
+      : [["feed", "Invitaciones", ICON.grid], ["citas", "Mis citas", ICON.cal], ["perfil", "Perfil", ICON.user]];
+  }
+
+  /* ---------- render ---------- */
+  function render() {
+    var root = document.getElementById("app");
+    var top = '<header class="top"><div class="brand"><span class="brand-mark">' + ICON.glass + '</span>plancito</div><span class="demo-tag">' +
+      (S ? (S.profile.role === "el" ? "Vista de él" : "Vista de ella") + " · demo" : "Demo") + "</span></header>";
+    var body, nav = "";
+    if (!S) body = onboarding();
+    else if (ui.busy) body = busyView();
+    else {
+      if (!ui.tab) ui.tab = S.profile.role === "el" ? "mias" : "feed";
+      body = ui.view === "detalle" ? detalle() : ui.view === "link" ? linkView() : ui.view === "landing" ? landingView() : screenFor(ui.tab);
+      nav = '<nav class="tabs" aria-label="Secciones">' + tabsFor(S.profile.role).map(function (t) {
+        return '<button class="tab" data-act="tab" data-id="' + t[0] + '"' + (ui.tab === t[0] && ui.view !== "detalle" ? ' aria-current="page"' : "") + ">" + t[2] + "<span>" + t[1] + "</span></button>";
+      }).join("") + "</nav>";
+    }
+    root.innerHTML = top + '<main class="screen' + (ui.busy ? " busy" : "") + '" id="screen">' + body + "</main>" + nav;
+  }
+
+  function screenFor(tab) {
+    if (tab === "feed") return feed();
+    if (tab === "citas") return citas();
+    if (tab === "mias") return mias();
+    if (tab === "nueva") return nueva();
+    if (tab === "garantias") return garantias();
+    return perfil();
+  }
+
+  /* ---------- onboarding ---------- */
+  function onboarding() {
+    if (ui.step === 2) {
+      return '<div class="label">Paso 2 de 2</div><h1>Demuestra que eres tú</h1>' +
+        '<p class="lead">Un video de 5 segundos que se compara con tus fotos para detectar perfiles falsos. En esta demo se simula, no se usa tu cámara.</p>' +
+        '<div class="ring"><div class="ring-in">[Cámara frontal]</div></div>' +
+        '<div class="note"><strong>Gira la cabeza a la izquierda y sonríe</strong><span class="small">Al final se pide una identificación oficial para confirmar que tienes 18 años o más.</span></div>' +
+        '<button class="btn" data-act="verify">Grabar 5 segundos (simulado)</button>';
+    }
+    var p = ui.pending || { role: "", name: "", age: "" };
+    return '<div class="label">Paso 1 de 2</div><h1>Menos chat. Más citas de verdad.</h1>' +
+      '<p class="lead">Ellos proponen un plan concreto. Ellas eligen con quién salir. Todos verificados.</p>' +
+      '<form id="f-perfil" novalidate>' +
+      '<div class="field"><span class="label" id="lbl-role">¿Cómo quieres probar la app?</span><div class="roles" role="group" aria-labelledby="lbl-role">' +
+      '<button type="button" class="role" data-act="pickRole" data-id="el" aria-pressed="' + (p.role === "el") + '"><strong>Soy él</strong><span class="small">Publico invitaciones</span></button>' +
+      '<button type="button" class="role" data-act="pickRole" data-id="ella" aria-pressed="' + (p.role === "ella") + '"><strong>Soy ella</strong><span class="small">Elijo a quién aceptar</span></button>' +
+      "</div></div>" +
+      '<div class="field"><label for="in-name">Tu nombre</label><input class="input" id="in-name" name="name" autocomplete="given-name" value="' + esc(p.name) + '"></div>' +
+      '<div class="field"><label for="in-age">Edad</label><input class="input" id="in-age" name="age" type="number" inputmode="numeric" min="18" max="99" value="' + esc(p.age) + '"></div>' +
+      (ui.error ? '<p class="error">' + esc(ui.error) + "</p>" : "") +
+      '<button class="btn" type="submit">Continuar</button>' +
+      '<p class="small" style="margin:0;text-align:center">Solo mayores de 18 años · Se pagan experiencias, nunca personas</p></form>';
+  }
+
+  function busyView() {
+    return '<h1>' + esc(ui.busy.title) + '</h1><div class="ring"><div class="ring-in">' + esc(ui.busy.msgs[ui.busy.i]) + '</div></div>';
+  }
+
+  function runBusy(title, msgs, done) {
+    ui.busy = { title: title, msgs: msgs, i: 0 };
+    render();
+    var timer = setInterval(function () {
+      ui.busy.i++;
+      if (ui.busy.i >= ui.busy.msgs.length) { clearInterval(timer); ui.busy = null; done(); save(); render(); return; }
+      render();
+    }, 900);
+  }
+
+  /* ---------- ella ---------- */
+  function activeAccepted() { return S.invites.filter(function (x) { return x.acceptedBy === "me" && ["aceptada", "confirmada", "en_lugar"].indexOf(x.status) >= 0; }).length; }
+
+  function inviteCard(x, action) {
+    return '<article class="card"><div class="band" style="background:' + (TONO[x.tipo] || TONO.Otro) + '"><span style="display:flex;gap:6px;flex-wrap:wrap"><span class="tagpill">' + esc(x.tipo) + "</span>" + (x.doble ? '<span class="tagpill">Cita doble</span>' : "") + '</span><span class="tagpill lime">Garantía ' + money(GARANTIA) + "</span></div>" +
+      '<div class="card-body"><div class="who"><span class="avatar" aria-hidden="true">' + esc(x.from.charAt(0)) + '</span><div class="who-text"><strong>' + esc(x.from) + ", " + esc(x.age) + '</strong><span class="small">' + esc(repText(x.rep)) + (x.example ? " · ejemplo" : " · creada en esta prueba") + "</span></div></div>" +
+      "<h2>" + esc(x.plan) + "</h2>" +
+      '<div class="meta"><span>' + esc(x.lugar) + "</span><span>" + esc(fmt(x.fecha)) + "</span><span>Plan de ~" + money(x.costo) + ", paga él</span></div>" + action + "</div></article>";
+  }
+
+  function feed() {
+    var list = S.invites.filter(function (x) { return x.status === "abierta" && (ui.filter === "Todos" || x.tipo === ui.filter); });
+    list.sort(function (a, b) { return (b.destacada ? 1 : 0) - (a.destacada ? 1 : 0) || new Date(a.fecha) - new Date(b.fecha); });
+    var chips = ["Todos"].concat(TIPOS).map(function (t) { return '<button class="chip" data-act="filter" data-id="' + t + '" aria-pressed="' + (ui.filter === t) + '">' + t + "</button>"; }).join("");
+    var cards = list.length ? list.map(function (x) { return inviteCard(x, '<button class="btn" data-act="open" data-id="' + x.id + '">Ver invitación</button>'); }).join("")
+      : '<div class="empty"><strong>No hay invitaciones de este tipo ahora</strong><span class="small">Prueba otro filtro o cambia a la vista de él para crear una.</span></div>';
+    return '<div class="note ok"><strong>Jueves de Plancito</strong><span class="small">Las invitaciones nuevas salen cada jueves a las 7 pm. Próximo: ' + esc(nextThursday()) + ".</span></div>" +
+      "<h1>Te invitan</h1><p class=\"lead\">Tú eliges con quién salir. Él paga el plan y deja una garantía de que va a llegar.</p>" +
+      '<div class="chips" role="group" aria-label="Filtrar por tipo">' + chips + "</div>" +
+      '<p class="small" style="margin:0">Tienes ' + activeAccepted() + " de 2 citas aceptadas a la vez.</p>" + cards;
+  }
+
+  function detalle() {
+    var x = find(ui.detailId);
+    if (!x) { ui.view = null; return screenFor(ui.tab); }
+    var full = activeAccepted() >= 2;
+    return '<button class="back" data-act="close">← Invitaciones</button>' +
+      '<span class="label" style="color:var(--accent)">' + esc(x.from) + " te invita</span><h1>" + esc(x.plan) + "</h1>" +
+      '<div class="meta"><span>' + esc(x.lugar) + "</span><span>" + esc(fmt(x.fecha)) + "</span></div>" +
+      (x.msg ? '<div class="note"><span class="small">Mensaje de ' + esc(x.from) + "</span><span>“" + esc(x.msg) + "”</span></div>" : "") +
+      '<div class="card"><div class="card-body"><h2>¿Cómo sé que es real?</h2><div class="checks">' +
+      '<div class="check"><b>✓</b><span>Dejó ' + money(GARANTIA) + " de garantía: si no llega, se le cobran</span></div>" +
+      '<div class="check"><b>✓</b><span>Él paga el plan (~' + money(x.costo) + ") directo en el lugar</span></div>" +
+      '<div class="check"><b>✓</b><span>Verificado con video e identificación oficial</span></div>' +
+      '<div class="check"><b>✓</b><span>Historial: ' + esc(repText(x.rep)) + "</span></div>" +
+      '<div class="check"><b>✓</b><span>Si no llega, recibe un aviso; con 2 avisos sale de la app</span></div></div></div></div>' +
+      '<div class="note"><strong>Para ti es gratis, pero es un compromiso</strong><span class="small">Confirma 24 h antes. Si aceptas y no llegas, tu cuenta se suspende. Máximo 2 citas aceptadas a la vez.</span></div>' +
+      (x.doble ? '<div class="note"><strong>Es cita doble</strong><span class="small">' + esc(x.from) + ' va con un amigo y tú vas con una amiga. Tu amiga recibe un link para verificarse antes de la cita.</span></div>' +
+        '<div class="field"><label for="in-amiga">¿Con qué amiga vas?</label><input class="input" id="in-amiga" autocomplete="off" placeholder="Nombre de tu amiga"></div>' : "") +
+      (ui.error ? '<p class="error">' + esc(ui.error) + "</p>" : "") +
+      (full ? '<p class="error">Ya tienes 2 citas aceptadas. Termina o cancela una para aceptar otra.</p>' : "") +
+      '<button class="btn" data-act="accept" data-id="' + x.id + '"' + (full ? " disabled" : "") + ">Aceptar invitación</button>" +
+      '<button class="btn ghost" data-act="close">Ahora no</button>';
+  }
+
+  function citas() {
+    var list = S.invites.filter(function (x) { return x.acceptedBy === "me"; });
+    if (!list.length) return '<h1>Mis citas</h1><div class="empty"><strong>Aún no aceptas invitaciones</strong><span class="small">Ve a Invitaciones, abre una y tócale "Aceptar".</span><button class="btn" data-act="tab" data-id="feed">Ver invitaciones</button></div>';
+    return "<h1>Mis citas</h1>" + list.map(function (x) {
+      var a = "";
+      if (x.status === "aceptada") a = '<div class="note"><span class="small">Confirma 24 h antes. Si no confirmas, la invitación se reabre para otras.</span></div><button class="btn" data-act="confirm" data-id="' + x.id + '">Confirmar que voy</button><button class="btn ghost small" data-act="cancelElla" data-id="' + x.id + '">Cancelar (sin penalización)</button>';
+      else if (x.status === "confirmada") a = '<button class="btn" data-act="checkinElla" data-id="' + x.id + '">Es el día: hacer check-in</button><button class="btn soft small" data-act="share" data-id="' + x.id + '">' + (x.shared ? "Cita compartida con tu amiga ✓" : "Compartir mi cita con una amiga") + "</button>";
+      else if (x.status === "en_lugar") a = '<div class="note ok"><strong>Los dos llegaron. ¡Disfruten!</strong></div><span class="label">Después de la cita</span><h2>¿' + esc(x.from) + " cumplió con el plan?</h2>" +
+        '<div class="btn-row"><button class="btn small" data-act="rateYes" data-id="' + x.id + '">Sí, cumplió</button><button class="btn ghost small" data-act="rateNo" data-id="' + x.id + '">No llegó</button></div>';
+      else if (x.status === "cumplida") a = '<div class="note ok"><strong>Cita cumplida</strong><span class="small">' + esc(x.from) + " ahora tiene " + esc(repText(x.rep).toLowerCase()) + ".</span></div>";
+      else if (x.status === "el_no_llego") a = '<div class="note"><strong>Lo sentimos</strong><span class="small">' + esc(x.from) + " perdió su garantía de " + money(GARANTIA) + " y recibió un aviso. Con 2 avisos sale de la app.</span></div>";
+      return '<article class="card"><div class="card-body">' + statusPill(x.status) + "<h2>" + esc(x.plan) + '</h2><div class="meta"><span>Con ' + esc(x.from) + (x.doble ? " y su amigo · tú con " + esc(x.amiga || "tu amiga") : "") + "</span><span>" + esc(x.lugar) + "</span><span>" + esc(fmt(x.fecha)) + "</span></div>" + a + "</div></article>";
+    }).join("");
+  }
+
+  /* ---------- él ---------- */
+  function mias() {
+    var list = S.invites.filter(function (x) { return x.mine; });
+    if (!list.length) return '<h1>Mis invitaciones</h1><div class="empty"><strong>Aún no publicas invitaciones</strong><span class="small">Propón un plan concreto: qué, dónde y cuándo. Solo se aparta una garantía de ' + money(GARANTIA) + ", no se cobra.</span><button class=\"btn\" data-act=\"tab\" data-id=\"nueva\">Crear mi primera invitación</button></div>";
+    return "<h1>Mis invitaciones</h1>" + list.map(function (x) {
+      var a = "";
+      if (x.acceptedBy === "me") a = '<div class="note"><span class="small">La aceptaste tú mismo en la vista de ella. Sigue la cita desde "Mis citas" en esa vista.</span></div>';
+      else if (x.status === "abierta") a = '<div class="note"><span class="small">Visible para mujeres verificadas cerca. Garantía de ' + money(GARANTIA) + " apartada.</span></div>" +
+        '<button class="btn" data-act="openLink" data-id="' + x.id + '">Mandar por WhatsApp o Instagram</button>' +
+        '<span class="label">Probar qué pasa si…</span><button class="btn soft small" data-act="simAccept" data-id="' + x.id + '">Alguien acepta</button><button class="btn soft small" data-act="simExpire" data-id="' + x.id + '">Pasan 72 h y nadie acepta</button>';
+      else if (x.status === "aceptada") a = '<div class="note"><strong>' + esc(x.acceptedBy) + ' aceptó</strong><span class="small">Ella debe confirmar 24 h antes.</span></div>' +
+        '<span class="label">Probar qué pasa si…</span><button class="btn soft small" data-act="simConfirm" data-id="' + x.id + '">Ella confirma</button><button class="btn soft small" data-act="simNoConfirm" data-id="' + x.id + '">Ella no confirma</button>';
+      else if (x.status === "confirmada") a = '<div class="note"><strong>Cita confirmada con ' + esc(x.acceptedBy) + '</strong><span class="small">El día de la cita haz check-in con tu ubicación al llegar.</span></div>' +
+        '<button class="btn" data-act="checkinEl" data-id="' + x.id + '">Es el día: hacer check-in</button><button class="btn ghost small" data-act="noShowEl" data-id="' + x.id + '">Simular: no pude llegar</button>';
+      else if (x.status === "en_lugar_el") a = '<div class="note ok"><strong>Llegaste a tiempo</strong></div><span class="label">¿Qué pasó?</span>' +
+        '<button class="btn small" data-act="bothArrived" data-id="' + x.id + '">Llegamos los dos</button><button class="btn ghost small" data-act="ellaNoShow" data-id="' + x.id + '">Ella no llegó</button>';
+      else if (x.status === "liberada") a = '<div class="note ok"><strong>Pagaste $0</strong><span class="small">Se liberó tu garantía de ' + money(GARANTIA) + ".</span></div>" +
+        '<div class="note"><span class="small">Los planes de fin de semana y de menor costo, como café o tacos, se aceptan más rápido.</span></div><button class="btn" data-act="repost" data-id="' + x.id + '">Publicar de nuevo</button>';
+      else if (x.status === "cumplida") a = '<div class="note ok"><strong>Cita cumplida</strong><span class="small">Tu garantía se liberó. Tu historial sube y tus invitaciones salen más arriba.</span></div>';
+      else if (x.status === "ella_no_llego") a = '<div class="note"><strong>Tu dinero está protegido</strong><span class="small">No pagas nada, ella queda suspendida y ganaste una invitación destacada gratis.</span></div><button class="btn" data-act="repost" data-id="' + x.id + '">Reinvitar a otra (destacada)</button>';
+      else if (x.status === "yo_no_llegue") a = '<div class="note"><strong>Se cobraron ' + money(GARANTIA) + '</strong><span class="small">Recibiste un aviso. Con 2 avisos tu cuenta sale de la app.</span></div>';
+      return '<article class="card"><div class="band" style="background:' + (TONO[x.tipo] || TONO.Otro) + '"><span style="display:flex;gap:6px;flex-wrap:wrap"><span class="tagpill">' + esc(x.tipo) + "</span>" + (x.doble ? '<span class="tagpill">Cita doble</span>' : "") + "</span>" + (x.destacada ? '<span class="tagpill lime">Destacada</span>' : "") + '</div><div class="card-body">' + statusPill(x.status) +
+        "<h2>" + esc(x.plan) + '</h2><div class="meta"><span>' + esc(x.lugar) + "</span><span>" + esc(fmt(x.fecha)) + "</span><span>Plan de ~" + money(x.costo) + "</span></div>" + a + "</div></article>";
+    }).join("");
+  }
+
+  function nextThursday() {
+    var t = new Date(); var add = (4 - t.getDay() + 7) % 7; if (add === 0 && t.getHours() >= 22) add = 7;
+    t.setDate(t.getDate() + add);
+    try { return (add === 0 ? "hoy, " : "") + t.toLocaleDateString("es-MX", { weekday: "long", day: "numeric", month: "long" }) + " a las 7 pm"; } catch (e) { return "el jueves a las 7 pm"; }
+  }
+  function shortLink(x) { return "plancito.mx/i/" + x.id.slice(-6); }
+
+  function linkView() {
+    var x = find(ui.detailId);
+    if (!x) { ui.view = null; return screenFor(ui.tab); }
+    return '<button class="back" data-act="close">← Mis invitaciones</button>' +
+      "<h1>Manda tu invitación a quien tú quieras</h1>" +
+      '<p class="lead">A alguien que ya conoces, o que te gustó en otra app. Para aceptar, ella crea su cuenta y se verifica en un minuto.</p>' +
+      '<span class="label">Así se ve en WhatsApp</span>' +
+      '<div style="background:#0B3B2E;border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:8px">' +
+      '<div style="align-self:flex-end;max-width:92%;background:#1F5C47;border-radius:14px 14px 4px 14px;overflow:hidden">' +
+      '<div style="background:' + (TONO[x.tipo] || TONO.Otro) + ';color:#15121C;padding:12px 14px;display:flex;flex-direction:column;gap:4px">' +
+      '<span style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px">plancito' + (x.doble ? " · cita doble" : "") + "</span>" +
+      '<strong style="font-family:var(--display);font-size:18px;line-height:1.2">' + esc(x.plan) + "</strong></div>" +
+      '<div style="padding:10px 14px;display:flex;flex-direction:column;gap:2px;color:#F6F2EC"><span style="font-size:13px">' + esc(fmt(x.fecha)) + " · " + esc(x.lugar) + '</span><span style="font-size:13px;color:#9FE3C6">' + esc(shortLink(x)) + "</span></div></div></div>" +
+      '<div class="field"><label for="in-link">Link de tu invitación</label><input class="input" id="in-link" readonly value="https://' + esc(shortLink(x)) + '"></div>' +
+      '<div class="btn-row"><button class="btn small" data-act="copyLink" data-id="' + x.id + '">Copiar link</button><button class="btn soft small" data-act="simOpenLink" data-id="' + x.id + '">Ver lo que ella ve</button></div>' +
+      '<div class="note"><span class="small">Cada mujer que llega por tu link entra verificada y ve también las demás invitaciones. Llevas ' + (S.traidas || 0) + " por tus links.</span></div>" +
+      '<p class="small" style="margin:0">En esta demo el link todavía no abre nada; toca "Ver lo que ella ve" para probarlo.</p>';
+  }
+
+  function landingView() {
+    var x = find(ui.detailId);
+    if (!x) { ui.view = null; return screenFor(ui.tab); }
+    return '<button class="back" data-act="close">← Volver a mi vista</button>' +
+      '<span class="label">Lo que ella ve al abrir el link</span>' +
+      '<span class="label" style="color:var(--accent)">' + esc(x.from) + " te invita</span><h1>" + esc(x.plan) + "</h1>" +
+      '<div class="meta"><span>' + esc(x.lugar) + "</span><span>" + esc(fmt(x.fecha)) + "</span></div>" +
+      '<div class="card"><div class="card-body"><div class="checks">' +
+      '<div class="check"><b>✓</b><span>' + esc(x.from) + " está verificado con video e INE</span></div>" +
+      '<div class="check"><b>✓</b><span>Dejó ' + money(GARANTIA) + " de garantía de que va a llegar</span></div>" +
+      '<div class="check"><b>✓</b><span>Es en un lugar público y él paga el plan</span></div>' +
+      (x.doble ? '<div class="check"><b>✓</b><span>Es cita doble: vas con una amiga</span></div>' : "") +
+      "</div></div></div>" +
+      '<div class="note"><strong>Para aceptar, crea tu cuenta gratis</strong><span class="small">Nombre, edad y un video de 5 segundos. Nunca pagas nada.</span></div>' +
+      '<button class="btn" data-act="simJoin" data-id="' + x.id + '">Simular: se registra, se verifica y acepta</button>';
+  }
+
+  function defaultDate() { var t = new Date(); t.setDate(t.getDate() + 3); return t.toISOString().slice(0, 10); }
+
+  function nueva() {
+    if (S.strikes >= 2) return '<h1>Cuenta suspendida</h1><div class="note"><span class="small">Tienes 2 avisos por no llegar a citas. En la app real ya no podrías publicar. En esta demo puedes reiniciar desde Perfil.</span></div>';
+    var chips = TIPOS.map(function (t) { return '<button type="button" class="chip" data-act="newTipo" data-id="' + t + '" aria-pressed="' + (ui.newTipo === t) + '">' + t + "</button>"; }).join("");
+    return "<h1>¿A dónde la invitas?</h1><p class=\"lead\">Cualquier lugar o evento público. El plan lo pagas tú en el lugar, como siempre.</p>" +
+      '<form id="f-nueva" novalidate>' +
+      '<div class="field"><span class="label" id="lbl-tipo">Tipo de plan</span><div class="chips" role="group" aria-labelledby="lbl-tipo">' + chips + "</div></div>" +
+      '<div class="field"><label for="in-plan">Tu invitación</label><input class="input" id="in-plan" name="plan" placeholder="Te invito a cenar tacos de autor" value="Te invito a "></div>' +
+      '<div class="field"><label for="in-lugar">Lugar</label><input class="input" id="in-lugar" name="lugar" placeholder="Nombre y colonia del lugar"></div>' +
+      '<div class="grid2"><div class="field"><label for="in-dia">Día</label><input class="input" id="in-dia" name="dia" type="date" value="' + defaultDate() + '"></div>' +
+      '<div class="field"><label for="in-hora">Hora</label><input class="input" id="in-hora" name="hora" type="time" value="20:30"></div></div>' +
+      '<div class="field"><label for="in-costo">Costo aproximado del plan (MXN)</label><input class="input" id="in-costo" name="costo" type="number" inputmode="numeric" min="0" value="800"></div>' +
+      '<div class="field"><label for="in-msg">Mensaje corto (opcional)</label><textarea class="input" id="in-msg" name="msg" placeholder="Por qué te gusta este plan"></textarea></div>' +
+      '<label class="note" for="in-doble" style="flex-direction:row;align-items:center;gap:12px"><input id="in-doble" name="doble" type="checkbox" style="width:22px;height:22px;flex:none"><span style="display:flex;flex-direction:column;gap:2px"><strong>Cita doble</strong><span class="small">Tú vas con un amigo y ella con una amiga. Muchas mujeres se sienten más seguras así.</span></span></label>' +
+      (S.destacadas > 0 ? '<label class="note" for="in-dest" style="flex-direction:row;align-items:center;gap:10px"><input id="in-dest" name="dest" type="checkbox" checked style="width:22px;height:22px"> Usar 1 invitación destacada gratis (tienes ' + S.destacadas + ")</label>" : "") +
+      '<div class="note"><strong>Garantía: ' + money(GARANTIA) + '</strong><span class="small">Se aparta en tu tarjeta, no se cobra. Se libera si llegas a la cita o si nadie acepta en 72 h. Solo se cobra si no llegas. (Simulado: no se usa ninguna tarjeta.)</span></div>' +
+      (ui.error ? '<p class="error">' + esc(ui.error) + "</p>" : "") +
+      '<p class="small" style="margin:0">Tu invitación sale en el próximo Jueves de Plancito (' + esc(nextThursday()) + '). Al publicarla podrás mandarla por WhatsApp o Instagram a quien tú quieras.</p>' +
+      '<button class="btn" type="submit">Apartar ' + money(GARANTIA) + " y publicar</button></form>";
+  }
+
+  function garantias() {
+    var holding = S.invites.filter(function (x) { return x.mine && HOLDING.indexOf(x.status) >= 0; }).length * GARANTIA;
+    var cobrado = S.wallet.filter(function (w) { return w.kind === "cobrada"; }).reduce(function (s, w) { return s + w.amount; }, 0);
+    var liberado = S.wallet.filter(function (w) { return w.kind === "liberada"; }).reduce(function (s, w) { return s + w.amount; }, 0);
+    var NAMES = { apartada: "Apartada", liberada: "Liberada", cobrada: "Cobrada" };
+    var rows = S.wallet.length ? '<div class="ledger">' + S.wallet.map(function (w) {
+      return '<div class="ledger-row"><div style="min-width:0"><strong>' + NAMES[w.kind] + '</strong><div class="small">' + esc(w.desc) + " · " + esc(fmt(w.at)) + '</div></div><span class="amt">' + (w.kind === "cobrada" ? "−" : "") + money(w.amount) + "</span></div>";
+    }).join("") + "</div>" : '<div class="empty"><span class="small">Aquí verás cada garantía: cuándo se apartó, se liberó o se cobró.</span></div>';
+    return '<h1>Garantías</h1><p class="lead">Simulado. En la app real lo maneja un procesador de pagos con preautorización.</p>' +
+      '<div class="stats"><div class="stat"><span class="small">Apartado</span><b>' + money(holding) + '</b></div><div class="stat"><span class="small">Liberado</span><b>' + money(liberado) + '</b></div><div class="stat"><span class="small">Cobrado</span><b>' + money(cobrado) + "</b></div></div>" + rows;
+  }
+
+  function perfil() {
+    var p = S.profile, other = p.role === "el" ? "ella" : "él";
+    var mineRep = S.myRep.total === 0 ? "Aún sin citas" : "Cumpliste " + S.myRep.ok + " de " + S.myRep.total;
+    return "<h1>" + esc(p.name) + ", " + esc(p.age) + "</h1>" +
+      '<div class="note ok"><strong>Verificado (simulado)</strong><span class="small">Video e identificación oficial.</span></div>' +
+      '<div class="stats"><div class="stat"><span class="small">Historial</span><b style="font-size:15px">' + esc(mineRep) + '</b></div><div class="stat"><span class="small">Avisos</span><b>' + S.strikes + ' de 2</b></div><div class="stat"><span class="small">Destacadas</span><b>' + S.destacadas + "</b></div></div>" +
+      (p.role === "el" ? '<div class="note"><span class="small">Mujeres que llegaron por tus links: ' + (S.traidas || 0) + "</span></div>" : "") +
+      '<span class="label">Para probar</span><button class="btn soft" data-act="switchRole">Cambiar a la vista de ' + other + "</button>" +
+      (ui.confirmReset
+        ? '<div class="note"><strong>¿Borrar todo y empezar de cero?</strong><span class="small">Se borran tus invitaciones, citas y garantías de esta demo.</span><div class="btn-row" style="margin-top:8px"><button class="btn small" data-act="reset">Sí, reiniciar</button><button class="btn ghost small" data-act="cancelReset">No</button></div></div>'
+        : '<button class="btn ghost" data-act="askReset">Reiniciar demo</button>') +
+      '<p class="small" style="margin:0">Esta es una simulación. Tus datos se guardan solo en este navegador. No se cobra dinero ni se usa tu cámara o ubicación.</p>';
+  }
+
+  /* ---------- toast ---------- */
+  var toastTimer;
+  function toast(msg) {
+    var t = document.getElementById("toast");
+    t.textContent = msg; t.hidden = false;
+    clearTimeout(toastTimer); toastTimer = setTimeout(function () { t.hidden = true; }, 2600);
+  }
+  function top() { var s = document.getElementById("screen"); if (s) s.scrollTop = 0; }
+
+  /* ---------- actions ---------- */
+  var A = {
+    tab: function (id) { ui.tab = id; ui.view = null; ui.error = ""; ui.confirmReset = false; render(); top(); },
+    filter: function (id) { ui.filter = id; render(); },
+    pickRole: function (id) { ui.pending = readPerfil(); ui.pending.role = id; ui.error = ""; render(); },
+    verify: function () {
+      runBusy("Verificando…", ["Gira la cabeza a la izquierda…", "Ahora sonríe…", "Comparando con tus fotos…", "Revisando que no sea un deepfake…"], function () {
+        var p = ui.pending;
+        S = { profile: { name: p.name, age: p.age, role: p.role }, invites: examples(), wallet: [], strikes: 0, destacadas: 0, traidas: 0, myRep: { ok: 0, total: 0 } };
+        ui.tab = null; ui.step = 1; ui.pending = null;
+        setTimeout(function () { toast("¡Listo! Ya estás verificado."); }, 50);
+      });
+    },
+    open: function (id) { ui.view = "detalle"; ui.detailId = id; render(); top(); },
+    close: function () { ui.view = null; ui.error = ""; render(); top(); },
+    accept: function (id) {
+      var x = find(id); if (!x || activeAccepted() >= 2) return;
+      if (x.doble) {
+        var am = document.getElementById("in-amiga"), nombre = am ? am.value.trim() : "";
+        if (!nombre) { ui.error = "Escribe el nombre de la amiga con la que vas."; render(); return; }
+        x.amiga = nombre;
+      }
+      ui.error = "";
+      x.status = "aceptada"; x.acceptedBy = "me"; save();
+      ui.view = null; ui.tab = "citas"; render(); top();
+      toast(x.doble ? "Aceptaste. Le mandamos el link a " + x.amiga + "." : "Aceptaste. Confirma 24 h antes.");
+    },
+    openLink: function (id) { ui.view = "link"; ui.detailId = id; render(); top(); },
+    copyLink: function (id) {
+      var x = find(id), url = "https://" + shortLink(x), field = document.getElementById("in-link");
+      var fallback = function () { if (field) { field.focus(); field.select(); } toast("Selecciona y copia el link."); };
+      try { navigator.clipboard.writeText(url).then(function () { toast("Link copiado. Pégalo en WhatsApp."); }, fallback); } catch (e) { fallback(); }
+    },
+    simOpenLink: function (id) { ui.view = "landing"; ui.detailId = id; render(); top(); },
+    simJoin: function (id) {
+      var x = find(id);
+      runBusy("Ella se está registrando", ["Crea su cuenta…", "Graba su video de 5 segundos…", "Verificada. Acepta tu invitación…"], function () {
+        x.status = "aceptada"; x.acceptedBy = "Laura (llegó por tu link)"; S.traidas = (S.traidas || 0) + 1;
+        ui.view = null; ui.tab = "mias";
+        setTimeout(function () { toast("Laura se unió por tu link y aceptó."); }, 50);
+      });
+    },
+    confirm: function (id) { var x = find(id); x.status = "confirmada"; save(); render(); toast("Confirmado. Él ya sabe que vas."); },
+    cancelElla: function (id) { var x = find(id); x.status = "abierta"; x.acceptedBy = null; save(); render(); toast("Cancelaste a tiempo. Sin penalización."); },
+    share: function (id) { var x = find(id); x.shared = !x.shared; save(); render(); },
+    checkinElla: function (id) {
+      runBusy("Check-in", ["Verificando tu ubicación…", "Estás a 40 m del lugar", "Él también llegó"], function () { find(id).status = "en_lugar"; });
+    },
+    rateYes: function (id) {
+      var x = find(id); x.rep.ok++; x.rep.total++; x.status = "cumplida";
+      if (x.mine) { S.myRep.ok++; S.myRep.total++; ledger("liberada", GARANTIA, "Cita cumplida · " + x.lugar); }
+      save(); render(); toast("¡Gracias! Su historial sube.");
+    },
+    rateNo: function (id) {
+      var x = find(id); x.rep.total++; x.status = "el_no_llego";
+      if (x.mine) { S.myRep.total++; S.strikes++; ledger("cobrada", GARANTIA, "No llegó · " + x.lugar); }
+      save(); render(); toast("Registrado. Él perdió su garantía.");
+    },
+    newTipo: function (id) { ui.newTipo = id; var f = readNueva(); render(); restoreNueva(f); },
+    simAccept: function (id) { var x = find(id); x.status = "aceptada"; x.acceptedBy = "Mariana (ejemplo)"; save(); render(); toast("¡Mariana aceptó tu invitación!"); },
+    simExpire: function (id) { var x = find(id); x.status = "liberada"; ledger("liberada", GARANTIA, "Nadie aceptó · " + x.lugar); save(); render(); toast("Se liberó tu garantía. Pagaste $0."); },
+    simConfirm: function (id) { find(id).status = "confirmada"; save(); render(); toast("Ella confirmó. ¡Es una cita!"); },
+    simNoConfirm: function (id) { var x = find(id); x.status = "abierta"; x.acceptedBy = null; save(); render(); toast("No confirmó. Tu invitación se reabrió."); },
+    checkinEl: function (id) { runBusy("Check-in", ["Verificando tu ubicación…", "Estás a 40 m del lugar"], function () { find(id).status = "en_lugar_el"; }); },
+    noShowEl: function (id) {
+      var x = find(id); x.status = "yo_no_llegue"; S.strikes++; S.myRep.total++;
+      ledger("cobrada", GARANTIA, "No llegaste · " + x.lugar); save(); render(); toast("Se cobraron " + money(GARANTIA) + " y recibiste un aviso.");
+    },
+    bothArrived: function (id) {
+      var x = find(id); x.status = "cumplida"; S.myRep.ok++; S.myRep.total++;
+      ledger("liberada", GARANTIA, "Cita cumplida · " + x.lugar); save(); render(); toast("¡Cita cumplida! Garantía liberada.");
+    },
+    ellaNoShow: function (id) {
+      var x = find(id); x.status = "ella_no_llego"; S.destacadas++;
+      ledger("liberada", GARANTIA, "Ella no llegó · " + x.lugar); save(); render(); toast("No pagas nada. Ganaste una destacada.");
+    },
+    repost: function (id) {
+      var x = find(id), dest = x.status === "ella_no_llego";
+      if (dest && S.destacadas > 0) S.destacadas--;
+      var copy = { id: uid(), from: x.from, age: x.age, tipo: x.tipo, doble: !!x.doble, plan: x.plan, lugar: x.lugar, fecha: x.fecha, costo: x.costo, msg: x.msg, rep: { ok: S.myRep.ok, total: S.myRep.total }, mine: true, example: false, status: "abierta", acceptedBy: null, destacada: dest };
+      S.invites.unshift(copy); ledger("apartada", GARANTIA, "Garantía apartada · " + x.lugar); save(); render(); top(); toast("Publicada de nuevo.");
+    },
+    switchRole: function () { S.profile.role = S.profile.role === "el" ? "ella" : "el"; ui.tab = null; ui.view = null; save(); render(); top(); },
+    askReset: function () { ui.confirmReset = true; render(); },
+    cancelReset: function () { ui.confirmReset = false; render(); },
+    reset: function () { try { localStorage.removeItem(KEY); } catch (e) {} S = null; ui = { tab: null, view: null, detailId: null, filter: "Todos", step: 1, pending: null, busy: null, error: "", confirmReset: false, newTipo: "Cena" }; render(); }
+  };
+
+  function readPerfil() {
+    var n = document.getElementById("in-name"), a = document.getElementById("in-age");
+    var role = ui.pending ? ui.pending.role : "";
+    return { role: role, name: n ? n.value.trim() : "", age: a ? a.value.trim() : "" };
+  }
+  function readNueva() {
+    var ids = ["in-plan", "in-lugar", "in-dia", "in-hora", "in-costo", "in-msg"], out = {};
+    ids.forEach(function (i) { var el = document.getElementById(i); if (el) out[i] = el.value; });
+    return out;
+  }
+  function restoreNueva(v) { Object.keys(v).forEach(function (i) { var el = document.getElementById(i); if (el) el.value = v[i]; }); }
+
+  document.addEventListener("click", function (e) {
+    var b = e.target.closest("[data-act]");
+    if (!b || b.disabled || ui.busy) return;
+    var fn = A[b.dataset.act]; if (fn) fn(b.dataset.id, b);
+  });
+
+  document.addEventListener("submit", function (e) {
+    e.preventDefault();
+    if (e.target.id === "f-perfil") {
+      var p = readPerfil(), age = parseInt(p.age, 10);
+      ui.pending = p;
+      if (!p.role) ui.error = "Elige si quieres probar como él o como ella.";
+      else if (!p.name) ui.error = "Escribe tu nombre.";
+      else if (!age || age < 18) ui.error = "Debes tener 18 años o más para usar la app.";
+      else { ui.error = ""; ui.pending.age = age; ui.step = 2; }
+      render(); top();
+    }
+    if (e.target.id === "f-nueva") {
+      var v = readNueva(), when = new Date(v["in-dia"] + "T" + (v["in-hora"] || "20:30"));
+      var plan = (v["in-plan"] || "").trim();
+      if (plan.length < 14) ui.error = "Describe tu plan, por ejemplo: Te invito a cenar tacos de autor.";
+      else if (!(v["in-lugar"] || "").trim()) ui.error = "Escribe el lugar.";
+      else if (isNaN(when) || when < new Date()) ui.error = "Elige un día y hora en el futuro.";
+      else ui.error = "";
+      if (ui.error) { render(); restoreNueva(v); return; }
+      var destEl = document.getElementById("in-dest"), dest = !!(destEl && destEl.checked && S.destacadas > 0);
+      if (dest) S.destacadas--;
+      var dobleEl = document.getElementById("in-doble"), newId = uid();
+      S.invites.unshift({ id: newId, from: S.profile.name, age: S.profile.age, tipo: ui.newTipo, doble: !!(dobleEl && dobleEl.checked), plan: plan, lugar: v["in-lugar"].trim(), fecha: when.toISOString(),
+        costo: parseInt(v["in-costo"], 10) || 0, msg: (v["in-msg"] || "").trim(), rep: { ok: S.myRep.ok, total: S.myRep.total }, mine: true, example: false, status: "abierta", acceptedBy: null, destacada: dest });
+      ledger("apartada", GARANTIA, "Garantía apartada · " + v["in-lugar"].trim());
+      save(); ui.tab = "mias"; ui.view = "link"; ui.detailId = newId; render(); top(); toast("Publicada. Ahora mándala a quien tú quieras.");
+    }
+  });
+
+  render();
+})();
+</script>
