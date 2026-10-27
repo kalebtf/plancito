@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Plancito · Él te invita, tú eliges</title>
+<meta name="description" content="La app de citas donde él propone un plan real con garantía de que llega, y tú eliges con quién salir. Todos verificados. Únete a la lista de espera.">
+<meta property="og:title" content="Plancito · Él te invita, tú eliges">
+<meta property="og:description" content="Planes reales, gente verificada, cero chats eternos. Únete a la lista de espera.">
+<meta name="theme-color" content="#15121C">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=DM+Sans:wght@400;500;700&display=swap">
+<style>
+/* Una sola página para celular primero: portada, cómo funciona, seguridad, formulario. Look nocturno de "salir en la noche". */
+:root {
+  --bg: #15121C;
+  --surface: #221D2C;
+  --surface-2: #2B2436;
+  --line: #3A3346;
+  --fg: #F6F2EC;
+  --muted: #B3ACBF;
+  --accent: #FF5B3A;
+  --on-accent: #15121C;
+  --blue: #8AD1FF;
+  --lime: #E4F5A8;
+  --peach: #FFB4A2;
+  --sky: #B9E4FF;
+  --display: "Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
+  --body: "DM Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 16px; line-height: 1.5; }
+a { color: var(--fg); }
+:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
+img { max-width: 100%; }
+
+.wrap { max-width: 1040px; margin: 0 auto; padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px)); }
+header.top { padding-block: 18px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.brand { display: flex; align-items: center; gap: 10px; font-family: var(--display); font-weight: 800; font-size: 24px; letter-spacing: -0.5px; text-decoration: none; }
+.mark { width: 34px; height: 34px; border-radius: 10px; background: var(--accent); display: grid; place-items: center; }
+.top-cta { font-size: 14px; font-weight: 700; text-decoration: none; border: 1.5px solid var(--line); border-radius: 999px; padding: 10px 16px; min-height: 44px; display: inline-flex; align-items: center; }
+
+.hero { display: grid; gap: 36px; padding-block: 32px 56px; align-items: center; }
+@media (min-width: 860px) { .hero { grid-template-columns: 1.15fr 0.85fr; padding-block: 56px 80px; } }
+.eyebrow { display: inline-block; font-size: 13px; font-weight: 700; color: var(--on-accent); background: var(--lime); border-radius: 999px; padding: 6px 12px; }
+h1 { font-family: var(--display); font-weight: 800; font-size: clamp(42px, 9vw, 72px); line-height: 0.98; letter-spacing: -2px; margin: 18px 0 18px; text-wrap: balance; }
+h1 em { font-style: normal; color: var(--accent); }
+.lead { font-size: 19px; color: var(--muted); max-width: 34ch; margin: 0 0 28px; }
+.btn { display: inline-flex; align-items: center; justify-content: center; min-height: 56px; padding: 0 26px; border-radius: 16px; background: var(--accent); color: var(--on-accent); font-weight: 700; font-size: 17px; text-decoration: none; border: 0; cursor: pointer; font-family: inherit; }
+.btn:hover { filter: brightness(1.06); }
+.hero-note { margin: 14px 0 0; font-size: 14px; color: var(--muted); }
+
+.stack { display: flex; flex-direction: column; gap: 12px; }
+.invite { background: var(--surface); border-radius: 20px; overflow: hidden; }
+.invite .band { height: 64px; display: flex; align-items: flex-end; justify-content: space-between; padding: 10px 14px; gap: 8px; }
+.pill { font-size: 12px; font-weight: 700; color: #15121C; background: #F6F2EC; border-radius: 8px; padding: 4px 8px; }
+.pill.lime { background: var(--lime); }
+.invite .body { padding: 12px 16px 16px; display: flex; flex-direction: column; gap: 6px; }
+.invite .who { font-size: 13px; color: var(--muted); }
+.invite .plan { font-family: var(--display); font-weight: 600; font-size: 19px; line-height: 1.22; }
+.invite .meta { font-size: 13px; color: var(--muted); }
+.invite:nth-child(2) { margin-left: 28px; }
+.example-tag { font-size: 12px; color: var(--muted); text-align: right; margin: 0; }
+
+section { padding-block: 56px; border-top: 1px solid var(--line); }
+h2 { font-family: var(--display); font-weight: 800; font-size: clamp(30px, 5.5vw, 44px); line-height: 1.05; letter-spacing: -1px; margin: 0 0 12px; text-wrap: balance; }
+.section-lead { color: var(--muted); font-size: 17px; max-width: 52ch; margin: 0 0 32px; }
+
+.sides { display: grid; gap: 16px; }
+@media (min-width: 760px) { .sides { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.side { background: var(--surface); border-radius: 22px; padding: 24px; }
+.side h3 { font-family: var(--display); font-size: 24px; margin: 0 0 16px; }
+.steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 14px; counter-reset: s; }
+.steps li { display: grid; grid-template-columns: 32px 1fr; gap: 12px; align-items: start; counter-increment: s; }
+.steps li::before { content: counter(s); width: 32px; height: 32px; border-radius: 50%; background: var(--surface-2); display: grid; place-items: center; font-weight: 700; font-size: 14px; color: var(--blue); }
+.steps strong { display: block; }
+.steps span { color: var(--muted); font-size: 15px; }
+
+.fixes { display: grid; gap: 1px; background: var(--line); border-radius: 20px; overflow: hidden; }
+@media (min-width: 760px) { .fixes { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.fix { background: var(--surface); padding: 22px; display: flex; flex-direction: column; gap: 6px; }
+.fix .was { font-size: 14px; color: var(--muted); text-decoration: line-through; text-decoration-color: var(--accent); }
+.fix .now { font-weight: 700; font-size: 18px; }
+.fix p { margin: 0; color: var(--muted); font-size: 15px; }
+
+.thursday { background: var(--lime); color: #15121C; border-radius: 24px; padding: 28px; display: grid; gap: 10px; }
+.thursday h2 { color: #15121C; margin: 0; }
+.thursday p { margin: 0; font-size: 17px; max-width: 52ch; }
+
+.join { display: grid; gap: 32px; }
+@media (min-width: 860px) { .join { grid-template-columns: 0.9fr 1.1fr; align-items: start; } }
+form { background: var(--surface); border-radius: 24px; padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+.field { display: flex; flex-direction: column; gap: 6px; }
+label, .label { font-size: 14px; font-weight: 700; }
+input[type=text], input[type=email], select { min-height: 52px; border-radius: 14px; border: 1.5px solid var(--line); background: var(--bg); color: var(--fg); font: inherit; padding: 0 14px; width: 100%; }
+.choice { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.choice input { position: absolute; opacity: 0; pointer-events: none; }
+.choice label { min-height: 52px; border-radius: 14px; border: 1.5px solid var(--line); display: grid; place-items: center; cursor: pointer; font-weight: 500; }
+.choice input:checked + label { background: var(--fg); color: var(--bg); border-color: var(--fg); font-weight: 700; }
+.choice input:focus-visible + label { outline: 2px solid var(--blue); outline-offset: 2px; }
+.check { display: grid; grid-template-columns: 22px 1fr; gap: 10px; align-items: start; font-size: 14px; font-weight: 400; color: var(--muted); }
+.check input { width: 20px; height: 20px; margin: 2px 0 0; accent-color: var(--accent); }
+.form-note { font-size: 13px; color: var(--muted); margin: 0; }
+.error { color: var(--peach); font-size: 14px; margin: 0; }
+.hidden { display: none; }
+.perks { display: flex; flex-direction: column; gap: 12px; margin: 0; padding: 0; list-style: none; }
+.perks li { display: grid; grid-template-columns: 24px 1fr; gap: 10px; color: var(--muted); }
+.perks svg { color: var(--blue); margin-top: 2px; }
+
+footer { border-top: 1px solid var(--line); padding-block: 28px calc(28px + env(safe-area-inset-bottom, 0px)); color: var(--muted); font-size: 14px; display: flex; flex-wrap: wrap; gap: 8px 20px; justify-content: space-between; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="#" aria-label="Plancito, inicio">
+      <span class="mark"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#15121C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3v8a4 4 0 0 0 8 0V3"/><path d="M12 15v6"/><path d="M8 21h8"/></svg></span>
+      plancito
+    </a>
+    <a class="top-cta" href="#unete">Lista de espera</a>
+  </header>
+
+  <main>
+    <div class="hero">
+      <div>
+        <span class="eyebrow">Muy pronto en tu ciudad</span>
+        <h1>Él te invita a un plan real. <em>Tú eliges.</em></h1>
+        <p class="lead">La app de citas sin deslizar y sin chats eternos. Cada invitación ya dice qué, dónde y cuándo. Todos verificados.</p>
+        <a class="btn" href="#unete">Quiero entrar primero</a>
+        <p class="hero-note">Para ellas siempre es gratis.</p>
+      </div>
+      <div class="stack" aria-label="Ejemplos de invitaciones">
+        <article class="invite">
+          <div class="band" style="background: var(--peach)"><span class="pill">Cena</span><span class="pill lime">Garantía $250</span></div>
+          <div class="body">
+            <span class="who">Andrés, 34 · cumplió 3 de 3 citas</span>
+            <span class="plan">Te invito a cenar cocina mexicana contemporánea</span>
+            <span class="meta">Viernes 8:30 pm · paga él</span>
+          </div>
+        </article>
+        <article class="invite">
+          <div class="band" style="background: var(--sky)"><span class="pill">Cita doble</span><span class="pill lime">Garantía $250</span></div>
+          <div class="body">
+            <span class="who">Iván, 29 · cumplió 4 de 4 citas</span>
+            <span class="plan">Te invito a ti y a tu amiga a boliche y unas pizzas</span>
+            <span class="meta">Sábado 7:30 pm · paga él</span>
+          </div>
+        </article>
+        <p class="example-tag">Ejemplos de cómo se ve una invitación</p>
+      </div>
+    </div>
+
+    <section aria-labelledby="como">
+      <h2 id="como">Así funciona</h2>
+      <p class="section-lead">Tres pasos de cada lado. Nada de mandar "hola" cien veces.</p>
+      <div class="sides">
+        <div class="side">
+          <h3>Para ella</h3>
+          <ol class="steps">
+            <li><div><strong>Te verificas en un minuto</strong><span>Un video de 5 segundos y tu INE. Así nadie entra con perfil falso.</span></div></li>
+            <li><div><strong>Ves invitaciones con plan</strong><span>Qué, dónde y cuándo, antes de decir que sí. Puedes ir con una amiga.</span></div></li>
+            <li><div><strong>Eliges y sales</strong><span>Confirmas un día antes, haces check-in al llegar y compartes la cita con alguien de confianza.</span></div></li>
+          </ol>
+        </div>
+        <div class="side">
+          <h3>Para él</h3>
+          <ol class="steps">
+            <li><div><strong>Te verificas en un minuto</strong><span>Video e INE. Tu historial de citas cumplidas habla por ti.</span></div></li>
+            <li><div><strong>Propones un plan concreto</strong><span>Lo publicas en la app o lo mandas por WhatsApp a quien tú quieras.</span></div></li>
+            <li><div><strong>Dejas una garantía de $250</strong><span>Si llegas a la cita o nadie acepta, no pagas nada. Si ella no llega, tampoco.</span></div></li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="diferente">
+      <h2 id="diferente">Lo que te cansa de las otras apps</h2>
+      <p class="section-lead">Lo arreglamos desde las reglas, no con más funciones.</p>
+      <div class="fixes">
+        <div class="fix"><span class="was">Perfiles falsos y estafas</span><span class="now">Todos verificados con video e INE</span><p>Con detección de deepfakes y alertas si alguien te pide dinero o te manda enlaces raros.</p></div>
+        <div class="fix"><span class="was">Chats que nunca llegan a nada</span><span class="now">El plan ya viene en la invitación</span><p>El chat se abre cuando ya hay cita, solo para afinar detalles.</p></div>
+        <div class="fix"><span class="was">Plantones y ghosting</span><span class="now">Si no llegas, pierdes</span><p>Él deja garantía. Quien deja plantado pierde su reputación o su cuenta.</p></div>
+        <div class="fix"><span class="was">Miedo a conocer a un desconocido</span><span class="now">Solo lugares públicos</span><p>Check-in al llegar, compartir tu cita y la opción de ir en cita doble.</p></div>
+      </div>
+    </section>
+
+    <section aria-labelledby="jueves">
+      <div class="thursday">
+        <h2 id="jueves">Jueves de Plancito</h2>
+        <p>Cada jueves a las 7 pm salen las invitaciones nuevas del fin de semana. Abres la app, eliges tu plan y listo.</p>
+      </div>
+    </section>
+
+    <section id="unete" aria-labelledby="unete-titulo">
+      <div class="join">
+        <div>
+          <h2 id="unete-titulo">Entra primero</h2>
+          <p class="section-lead">Abrimos ciudad por ciudad. Las primeras personas en la lista entran antes que nadie.</p>
+          <ul class="perks">
+            <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg><span>Ellas entran primero en cada ciudad.</span></li>
+            <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg><span>Te avisamos por correo cuando abramos en tu ciudad. Sin spam.</span></li>
+            <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg><span>Solo mayores de 18 años.</span></li>
+          </ul>
+        </div>
+
+        <form id="lista" name="lista-espera" method="POST" action="/gracias.html" data-netlify="true" netlify-honeypot="bot-field" novalidate>
+          <input type="hidden" name="form-name" value="lista-espera">
+          <input type="hidden" name="origen" id="origen" value="">
+          <p class="hidden"><label for="bot-field">No llenes esto</label><input id="bot-field" name="bot-field"></p>
+
+          <div class="field">
+            <label for="nombre">Tu nombre</label>
+            <input id="nombre" name="nombre" type="text" autocomplete="given-name" required>
+          </div>
+          <div class="field">
+            <label for="correo">Correo</label>
+            <input id="correo" name="correo" type="email" autocomplete="email" inputmode="email" required>
+          </div>
+          <div class="field">
+            <span class="label" id="soy-lbl">Soy</span>
+            <div class="choice" role="radiogroup" aria-labelledby="soy-lbl">
+              <input type="radio" id="soy-mujer" name="soy" value="mujer" required><label for="soy-mujer">Mujer</label>
+              <input type="radio" id="soy-hombre" name="soy" value="hombre"><label for="soy-hombre">Hombre</label>
+            </div>
+          </div>
+          <div class="field">
+            <label for="ciudad">Ciudad</label>
+            <select id="ciudad" name="ciudad" required>
+              <option value="">Elige tu ciudad</option>
+              <option>Ciudad de México</option>
+              <option>Guadalajara</option>
+              <option>Monterrey</option>
+              <option>Puebla</option>
+              <option>Querétaro</option>
+              <option>Tijuana</option>
+              <option>Otra</option>
+            </select>
+          </div>
+          <label class="check" for="mayor"><input type="checkbox" id="mayor" name="mayor_de_18" value="si" required><span>Tengo 18 años o más.</span></label>
+          <label class="check" for="aviso"><input type="checkbox" id="aviso" name="acepta_aviso" value="si" required><span>Leí el <a href="/aviso-de-privacidad.html">aviso de privacidad</a> y acepto que me escriban sobre Plancito.</span></label>
+          <p class="error" id="form-error" role="alert" hidden></p>
+          <button class="btn" type="submit">Unirme a la lista</button>
+          <p class="form-note">Solo usamos tu correo para avisarte cuando abramos.</p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <span>© 2026 Plancito</span>
+    <a href="/aviso-de-privacidad.html">Aviso de privacidad</a>
+  </footer>
+</div>
+
+<script>
+(function () {
+  // Guarda de dónde llegó la persona (anuncio, link de un amigo) para medir qué funciona.
+  try {
+    var q = new URLSearchParams(location.search);
+    var src = q.get("utm_source") || q.get("ref") || q.get("origen") || "";
+    var camp = q.get("utm_campaign") || "";
+    document.getElementById("origen").value = (src + (camp ? " / " + camp : "")).slice(0, 120);
+  } catch (e) {}
+
+  var form = document.getElementById("lista");
+  var err = document.getElementById("form-error");
+  form.addEventListener("submit", function (e) {
+    var msg = "";
+    var correo = form.correo.value.trim();
+    if (!form.nombre.value.trim()) msg = "Escribe tu nombre.";
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo)) msg = "Revisa tu correo, parece que le falta algo.";
+    else if (!form.querySelector("input[name=soy]:checked")) msg = "Elige si eres mujer u hombre.";
+    else if (!form.ciudad.value) msg = "Elige tu ciudad.";
+    else if (!form.mayor.checked) msg = "Plancito es solo para mayores de 18 años.";
+    else if (!form.aviso.checked) msg = "Para unirte, acepta el aviso de privacidad.";
+    if (msg) { e.preventDefault(); err.textContent = msg; err.hidden = false; }
+    else { err.hidden = true; }
+  });
+})();
+</script>
+</body>
+</html>
